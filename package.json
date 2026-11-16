@@ -1,0 +1,28 @@
+{
+  "name": "trabalho3_sistemas_distribuidos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EduardoKPVeiga/Trabalho3_Sistemas_Distribuidos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EduardoKPVeiga/Trabalho3_Sistemas_Distribuidos/issues"
+  },
+  "homepage": "https://github.com/EduardoKPVeiga/Trabalho3_Sistemas_Distribuidos#readme",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.7",
+    "@grpc/proto-loader": "^0.8.1"
+  },
+  "allowScripts": {
+    "protobufjs@7.6.6": true
+  }
+}
