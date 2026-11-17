@@ -6,91 +6,70 @@ package cluster;
 // Serviço de Comunicação do Cluster e Cliente
 // ==========================================
 service ClusterService {
-  // --- Comunicação entre Nós (Eleição & Replicação Pull) ---
-  // 1. Eleição de Líder (estilo Raft)
   rpc RequestVote (RequestVoteRequest) returns (RequestVoteResponse);
 
-  // 2. Replicação Pull (estilo KRaft) e Heartbeat
   rpc Fetch (FetchRequest) returns (FetchResponse);
 
-  // --- Comunicação Cliente -> Cluster ---
-  // 3. Gravação com Redirecionamento (se não for líder)
   rpc Write (ClientWriteRequest) returns (ClientWriteResponse);
 
-  // 4. Consulta eventual nos nós do cluster (lê apenas dados comitados)
   rpc Read (ClientReadRequest) returns (ClientReadResponse);
 }
 
-// ==========================================
-// Estruturas de Log
-// ==========================================
 message LogEntry {
-  int64 index = 1;     // Posição sequencial no log (1, 2, 3...)
-  int32 term = 2;      // Termo em que o registro foi criado pelo líder
-  string key = 3;      // Chave do dado gravado
-  string value = 4;    // Valor do dado gravado
+  int64 index = 1;
+  int32 term = 2;
+  string key = 3;
+  string value = 4;
 }
 
-// ==========================================
-// 1. Eleição de Líder (RequestVote)
-// ==========================================
 message RequestVoteRequest {
-  int32 term = 1;             // Termo do candidato
-  string candidate_id = 2;    // Identificador do candidato (ex: "node-1")
-  int64 last_log_index = 3;   // Índice da última entrada do log do candidato
-  int32 last_log_term = 4;    // Termo da última entrada do log do candidato
+  int32 term = 1;
+  string candidate_id = 2;
+  int64 last_log_index = 3;
+  int32 last_log_term = 4;
 }
 
 message RequestVoteResponse {
-  int32 term = 1;             // Termo atual do nó votante (para candidato se atualizar)
-  bool vote_granted = 2;      // True se o candidato recebeu o voto
+  int32 term = 1;
+  bool vote_granted = 2;
 }
 
-// ==========================================
-// 2. Replicação Pull & Heartbeat (Fetch)
-// ==========================================
 message FetchRequest {
-  string replica_id = 1;      // Identificador do seguidor que faz o fetch
-  int32 term = 2;             // Termo atual do seguidor
-  int64 last_log_index = 3;   // Último índice de log que o seguidor possui
-  int32 last_log_term = 4;    // Termo da última entrada que o seguidor possui
+  string replica_id = 1;
+  int32 term = 2;
+  int64 last_log_index = 3;
+  int32 last_log_term = 4;
 }
 
 message FetchResponse {
-  int32 term = 1;                   // Termo atual do líder
-  bool success = 2;                 // True se o log do seguidor casa com o log do líder
-  repeated LogEntry entries = 3;    // Novas entradas de log para o seguidor anexar
-  int64 leader_commit_index = 4;    // Índice de commit do líder
-  int64 conflict_index = 5;         // Índice sugerido para truncar em caso de divergência
-  string leader_id = 6;             // ID do líder
+  int32 term = 1;
+  bool success = 2;
+  repeated LogEntry entries = 3;
+  int64 leader_commit_index = 4;
+  int64 conflict_index = 5;
+  string leader_id = 6;
 }
 
-// ==========================================
-// 3. Gravação do Cliente (Write)
-// ==========================================
 message ClientWriteRequest {
-  string key = 1;             // Chave a ser gravada/atualizada
-  string value = 2;           // Valor associado
+  string key = 1;
+  string value = 2;
 }
 
 message ClientWriteResponse {
-  bool success = 1;           // True se a escrita foi replicada no quórum e comitada
-  string message = 2;         // Mensagem de status (ex: "OK", "Quorum lost", "Redirect")
-  string leader_id = 3;       // Se não for líder, indica quem é o líder
-  string leader_address = 4;  // Endereço gRPC do líder (ex: "localhost:50051") para redirecionamento
-  int64 commit_index = 5;     // Índice em que o dado foi comitado
+  bool success = 1;
+  string message = 2;
+  string leader_id = 3;
+  string leader_address = 4;
+  int64 commit_index = 5;
 }
 
-// ==========================================
-// 4. Consulta do Cliente (Read)
-// ==========================================
 message ClientReadRequest {
-  string key = 1;             // Chave a ser consultada
+  string key = 1;
 }
 
 message ClientReadResponse {
-  bool success = 1;           // True se a chave foi encontrada nos dados comitados
-  string value = 2;           // Valor retornado
-  string message = 3;         // Mensagem informativa ou de erro
-  int64 commit_index = 4;     // Índice de commit do nó no momento da leitura
+  bool success = 1;
+  string value = 2;
+  string message = 3;
+  int64 commit_index = 4;
 }

@@ -1,0 +1,23 @@
+{
+  "currentTerm": 1104,
+  "votedFor": "node2",
+  "commitIndex": 2,
+  "log": [
+    {
+      "index": 1,
+      "term": 1095,
+      "key": "saldo",
+      "value": "100"
+    },
+    {
+      "index": 2,
+      "term": 1095,
+      "key": "usuario",
+      "value": "Carlos"
+    }
+  ],
+  "db": {
+    "saldo": "100",
+    "usuario": "Carlos"
+  }
+}
